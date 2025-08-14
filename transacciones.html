@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cola de Banco - Transacciones</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .header {
+            background-color: white;
+            color: #2c3e50;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            height: 50px;
+            width: auto;
+        }
+
+        .caja {
+            width: 200px;
+            height: 200px;
+            margin: 20px;
+            display: inline-block;
+            border: 2px solid #ccc;
+            text-align: center;
+            border-radius: 10px;
+            background-color: #ffffff;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .caja h5 {
+            margin-top: 70px;
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #e74c3c; 
+        }
+
+        .btn-custom {
+            background-color: white;
+            color: #2c3e50;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .btn-custom:hover {
+            background-color: #f0f0f0;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .container {
+            margin-top: 20px;
+        }
+
+        .announcement {
+            font-weight: bold;
+            color: #d9534f;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <img src="logo.png" alt="BAC Credomatic Logo" class="logo">
+        <h1>Banco - Transacciones</h1>
+    </div>
+
+    <div class="container text-center">
+        <h3 class="mb-4">Estado de las Cajas</h3>
+
+        <div id="cajas" class="mb-4">
+            <div id="caja1" class="caja"><h5>Caja 1</h5></div>
+            <div id="caja2" class="caja"><h5>Caja 2</h5></div>
+            <div id="caja3" class="caja"><h5>Caja 3</h5></div>
+            <div id="caja4" class="caja"><h5>Caja 4</h5></div>
+            <div id="caja5" class="caja"><h5>Caja 5</h5></div>
+            <div id="caja6" class="caja"><h5>Caja 6</h5></div>
+        </div>
+
+        <a href="index.html" class="btn btn-custom">Ir al Inicio</a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const cajas = JSON.parse(localStorage.getItem('cajas')) || [null, null, null, null, null, null]; // 6 cajas
+
+            function actualizarCajas() {
+                cajas.forEach((cliente, index) => {
+                    const cajaDiv = document.getElementById('caja' + (index + 1));
+                    if (cliente) {
+                        cajaDiv.style.backgroundColor = cliente.color || '#f8f9fa'; 
+                        cajaDiv.innerHTML = `<h5>Cliente ${cliente.id} </h5>`; 
+                    } else {
+                        cajaDiv.style.backgroundColor = '#f8f9fa';
+                        cajaDiv.innerHTML = `<h5>Caja ${index + 1}</h5>`;
+                    }
+                });
+            }
+
+            function retirarClienteCaja(event) {
+                const cajaDiv = event.target.closest('.caja');
+                const cajaIndex = parseInt(cajaDiv.id.replace('caja', '')) - 1;
+
+                if (cajas[cajaIndex]) {
+                    cajas[cajaIndex] = null;
+                    localStorage.setItem('cajas', JSON.stringify(cajas));
+                    actualizarCajas();
+                }
+            }
+
+            document.querySelectorAll('.caja').forEach(caja => {
+                caja.addEventListener('dblclick', retirarClienteCaja);
+            });
+
+            actualizarCajas(); 
+        });
+    </script>
+
+    <script src="transacciones.js"></script>
+</body>
+</html>

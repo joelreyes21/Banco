@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cola de Banco - Llamar Cliente</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Arial', sans-serif;
+        }
+
+     
+        .header {
+            background-color: white;
+            color: #101111;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            height: 50px;
+            width: auto;
+        }
+
+        .caja {
+            width: 200px;
+            height: 200px;
+            margin: 20px;
+            display: inline-block;
+            border: 2px solid #ccc;
+            text-align: center;
+            border-radius: 10px;
+            background-color: #ffffff;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .caja h5 {
+            margin-top: 70px;
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #dbdbdb;
+        }
+
+        .btn-custom {
+            background-color: white;
+            color: #050505;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .btn-custom:hover {
+            background-color: #f0f0f0;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .announcement {
+            font-weight: bold;
+            color: #d9534f;
+            font-size: 1.1em;
+        }
+
+        .container {
+            margin-top: 20px;
+        }
+
+        .btn {
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <img src="logo.png" alt="BAC Credomatic Logo" class="logo">
+        <h1></h1>
+    </div>
+
+    <div class="container text-center">
+        <h3 class="mb-4">Asignar Clientes a las Cajas</h3>
+
+        <div id="anuncio" class="announcement mb-4"></div>
+
+   
+        <div id="cajas" class="mb-4">
+            <div id="caja1" class="caja"><h5>Caja 1</h5></div>
+            <div id="caja2" class="caja"><h5>Caja 2</h5></div>
+            <div id="caja3" class="caja"><h5>Caja 3</h5></div>
+            <div id="caja4" class="caja"><h5>Caja 4</h5></div>
+            <div id="caja5" class="caja"><h5>Caja 5</h5></div>
+            <div id="caja6" class="caja"><h5>Caja 6</h5></div>
+        </div>
+
+  
+        <button id="llamarClienteBtn" class="btn btn-custom">Llamar Cliente</button>
+        
+        <a href="transacciones.html" class="btn btn-custom">Ir a Transacciones</a>
+    </div>
+
+    <script src="llamar_cliente.js"></script>
+</body>
+</html>
