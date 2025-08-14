@@ -1,17 +1,37 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Reiniciar numeración de tickets en cada refresh
+    localStorage.setItem('numeroCliente', '1');
+
+    // Cargar cola existente (si hay)
     let cola = JSON.parse(localStorage.getItem('cola')) || [];
-    let cajas = JSON.parse(localStorage.getItem('cajas')) || [null, null, null, null, null, null];
 
     function reproducirVoz(texto) {
         const utterance = new SpeechSynthesisUtterance(texto);
         window.speechSynthesis.speak(utterance);
     }
+
     function mostrarAnuncio(mensaje) {
-        document.getElementById('anuncio').innerText = mensaje;
+        const a = document.getElementById('anuncio');
+        if (a) a.innerText = mensaje;
+    }
+
+    // Refresca el display del header:
+    // - Si hay ticketActual => "Ticket: X"
+    // - Si no, muestra "Tickets: N" (N = largo de la cola)
+    function refrescarHeader() {
+        const el = document.getElementById('ticketDisplay');
+        if (!el) return;
+        const ticketActual = localStorage.getItem('ticketActual');
+        if (ticketActual) {
+            el.innerText = `Ticket: ${ticketActual}`;
+        } else {
+            el.innerText = `Tickets: ${cola.length}`;
+        }
     }
 
     function actualizarCola() {
         const colaDiv = document.getElementById('cola');
+        if (!colaDiv) return;
         colaDiv.innerHTML = '';
         cola.forEach(cliente => {
             const clienteDiv = document.createElement('div');
@@ -20,21 +40,46 @@ document.addEventListener('DOMContentLoaded', () => {
             clienteDiv.innerText = 'C' + cliente.id;
             colaDiv.appendChild(clienteDiv);
         });
+        // Actualiza el contador del header si no hay ticketActual
+        const ticketActual = localStorage.getItem('ticketActual');
+        if (!ticketActual) {
+            const el = document.getElementById('ticketDisplay');
+            if (el) el.innerText = `Tickets: ${cola.length}`;
+        }
     }
 
+    // Estado de cajas dinámico (lee de localStorage)
     function actualizarEstadoCajas() {
-        for (let i = 0; i < cajas.length; i++) {
-            const cajaDiv = document.getElementById('estadoCaja' + (i + 1));
-            if (cajas[i]) {
-                cajaDiv.classList.remove('desocupada');
-                cajaDiv.classList.add('ocupada');
-                cajaDiv.innerText = `Caja ${i + 1}: Ocupada con ticket ${cajas[i].id}`;
-            } else {
-                cajaDiv.classList.remove('ocupada');
-                cajaDiv.classList.add('desocupada');
-                cajaDiv.innerText = `Caja ${i + 1}: Desocupada`;
-            }
+        const cont = document.getElementById('estadoCajas');
+        if (!cont) return;
+
+        const cajas = JSON.parse(localStorage.getItem('cajas')) || [];
+        cont.innerHTML = '';
+
+        if (cajas.length === 0) {
+            cont.innerHTML = '<div class="text-muted text-center">No hay cajas creadas.</div>';
+            return;
         }
+
+        cajas.forEach((cliente, i) => {
+            const div = document.createElement('div');
+            div.className = 'estado-caja ' + (cliente ? 'ocupada' : 'desocupada');
+            div.textContent = cliente
+                ? `Caja ${i + 1}: Ocupada con ticket ${cliente.id}`
+                : `Caja ${i + 1}: Desocupada`;
+            cont.appendChild(div);
+        });
+    }
+
+    // Lee y luego incrementa el número para el próximo ticket
+    function obtenerNumeroCliente() {
+        // OJO: ya reiniciamos a '1' en cada refresh arriba.
+        let numeroCliente = parseInt(localStorage.getItem('numeroCliente')) || 1;
+        return numeroCliente;
+    }
+
+    function actualizarNumeroCliente(nuevoNumero) {
+        localStorage.setItem('numeroCliente', String(nuevoNumero));
     }
 
     function generarCliente() {
@@ -44,6 +89,12 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('cola', JSON.stringify(cola));
         actualizarCola();
         actualizarNumeroCliente(numeroCliente + 1);
+        // Al generar (sin entregar), el header debe mostrar cantidad en cola
+        const ticketActual = localStorage.getItem('ticketActual');
+        if (!ticketActual) {
+            const el = document.getElementById('ticketDisplay');
+            if (el) el.innerText = `Tickets: ${cola.length}`;
+        }
     }
 
     function entregarTicket() {
@@ -52,26 +103,33 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const cliente = cola[0];
-        localStorage.setItem('ticketActual', cliente.id);
-        document.getElementById('ticketDisplay').innerText = `Ticket: ${cliente.id}`;
-        
-        const mensajeTicket = `Ticket número ${cliente.id} entregado.`;
-        reproducirVoz(mensajeTicket);
-        mostrarAnuncio(mensajeTicket);
+        const cliente = cola[0]; // NO removemos aquí; lo remueve la caja al llamar
+        localStorage.setItem('ticketActual', String(cliente.id));
 
-        
+        const display = document.getElementById('ticketDisplay');
+        if (display) display.innerText = `Ticket: ${cliente.id}`;
+
+        const mensajeTicket = `Ticket número ${cliente.id} entregado.`;
+        mostrarAnuncio(mensajeTicket);
+        // Si querés voz, descomenta:
+        // reproducirVoz(mensajeTicket);
+
         actualizarCola();
         actualizarEstadoCajas();
     }
 
     function reiniciarCola() {
-        localStorage.removeItem('cola');
+        // vaciar cola en storage y memoria
+        cola = [];
+        localStorage.setItem('cola', JSON.stringify(cola));
         localStorage.removeItem('ticketActual');
+
+        // reiniciar numeración para próximos tickets
         actualizarNumeroCliente(1);
-        document.getElementById('ticketDisplay').innerText = 'Ticket: 0';
-        
-      
+
+        const display = document.getElementById('ticketDisplay');
+        if (display) display.innerText = 'Tickets: 0';
+
         const mensajeReinicio = 'La cola ha sido reiniciada.';
         mostrarAnuncio(mensajeReinicio);
 
@@ -79,31 +137,26 @@ document.addEventListener('DOMContentLoaded', () => {
         actualizarEstadoCajas();
     }
 
-    function actualizarNumeroCliente(nuevoNumero) {
-        localStorage.setItem('numeroCliente', nuevoNumero);
-    }
-
-    function obtenerNumeroCliente() {
-        let numeroCliente = parseInt(localStorage.getItem('numeroCliente')) || 1;
-        if (cola.length > 0) {
-            numeroCliente = Math.max(numeroCliente, cola[cola.length - 1].id + 1);
-        }
-        return numeroCliente;
-    }
-
+    // (Opcional) color random si luego lo querés usar
     function getRandomColor() {
         const letters = '0123456789ABCDEF';
         let color = '#';
-        for (let i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
-        }
+        for (let i = 0; i < 6; i++) color += letters[Math.floor(Math.random() * 16)];
         return color;
     }
 
-    document.getElementById('generarClienteBtn').addEventListener('click', generarCliente);
-    document.getElementById('entregarTicketBtn').addEventListener('click', entregarTicket);
-    document.getElementById('reiniciarBtn').addEventListener('click', reiniciarCola);
+    // Listeners
+    const btnGen = document.getElementById('generarClienteBtn');
+    if (btnGen) btnGen.addEventListener('click', generarCliente);
 
+    const btnEnt = document.getElementById('entregarTicketBtn');
+    if (btnEnt) btnEnt.addEventListener('click', entregarTicket);
+
+    const btnRei = document.getElementById('reiniciarBtn');
+    if (btnRei) btnRei.addEventListener('click', reiniciarCola);
+
+    // Render inicial
     actualizarCola();
-    actualizarEstadoCajas(); 
+    actualizarEstadoCajas();
+    refrescarHeader();
 });

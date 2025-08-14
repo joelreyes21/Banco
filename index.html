@@ -1,193 +1,107 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cola de Banco - Tickets</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-
-
-        body {
-            background-color: #f4f6f9;
-            font-family: 'Arial', sans-serif;
-        }
-        .header {
-            background-color: white;
-            color: #2c3e50; 
-            padding: 20px 50px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-        .ticket-display {
-            background-color: #f50e0e;
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            font-weight: bold;
-            font-size: 1.5rem;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        .estado-container {
-            background-color: white;
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-        }
-        .estado-caja {
-            background-color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 15px;
-            font-weight: bold;
-            text-align: center;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-        }
-        .estado-caja.ocupada {
-            color: #e74c3c;
-        }
-        .estado-caja.desocupada {
-            color: #0e0e0e;
-        }
-        .cliente {
-            display: inline-block;
-            width: 70px;
-            height: 70px;
-            margin: 5px;
-            border-radius: 10px;
-            color: white;
-            line-height: 70px;
-            text-align: center;
-            font-weight: bold;
-            font-size: 1.2em;
-            background-color: #3498db;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-        }
-        .cliente:nth-child(odd) {
-            background-color: #1abc9c;
-        }
-        .cliente:nth-child(even) {
-            background-color: #e74c3c;
-        }
-        .btn-custom {
-            background-color: white; 
-            color: #2c3e50; 
-            border: none;
-            padding: 12px 24px;
-            font-size: 1.1rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); 
-            transition: background-color 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .btn-custom:hover {
-            background-color: #f0f0f0; 
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-        }
-
-        .btn-outline-info, .btn-blue-filled, .btn-success, .btn-danger {
-            background-color: white; 
-            color: #2c3e50; 
-            border: none;
-            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); 
-            transition: background-color 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .btn-outline-info:hover, .btn-blue-filled:hover, .btn-success:hover, .btn-danger:hover {
-            background-color: #f0f0f0; 
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); 
-        }
-        .announcement {
-            font-weight: bold;
-            color: #d9534f;
-            font-size: 1.1em;
-        }
-        
-         .carousel-item img {
-            max-height: 550px; 
-            object-fit: cover;
-        }
-        .carousel-inner img {
-            object-fit: cover;
-            height: 650px;
-            transition: transform 0.5s ease-in-out;
-            border-radius: 3%; 
-        }
-        .carousel-inner .carousel-item {
-            transition: transform 0.6s ease;
-        }
-        .carousel-control-prev-icon, .carousel-control-next-icon {
-            filter: invert(1);
-        }
-        .logo {
-            height: 50px;
-            width: auto; 
-        }
-
-    </style>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Cola de Banco - Inicio</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
 </head>
-<body>
-    <div class="header">
-        <img src="logo.png" alt="Fichosa Logo" class="logo">
-        <div id="ticketDisplay" class="ticket-display">Tickets: 0</div>
-    </div>
+<body class="bg-light">
 
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
     <div class="container">
-        <div class="row">
-            <div class="col-lg-4">
-                <h4 class="text-center mb-4">Estado de las Cajas</h4>
-                <div class="estado-container">
-                    <div id="estadoCaja1" class="estado-caja desocupada">Caja 1: Desocupada</div>
-                    <div id="estadoCaja2" class="estado-caja desocupada">Caja 2: Desocupada</div>
-                    <div id="estadoCaja3" class="estado-caja desocupada">Caja 3: Desocupada</div>
-                    <div id="estadoCaja4" class="estado-caja desocupada">Caja 4: Desocupada</div>
-                    <div id="estadoCaja5" class="estado-caja desocupada">Caja 5: Desocupada</div>
-                    <div id="estadoCaja6" class="estado-caja desocupada">Caja 6: Desocupada</div>
-                </div>
-                <a href="llamado.html" class="btn btn-blue-filled btn-lg mt-4 d-block">Ir a Cajas</a>
-                <div id="cola" class="mb-3"></div>
-            </div>
-
-            <div class="col-lg-8 text-center">
-                <h3 class="mb-4">Sistema de Atención de Clientes</h3>
-                <div id="cola" class="mb-3"></div>
-                <div id="anuncioCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
-                    <div class="carousel-inner">
-                        <div class="carousel-item active">
-                            <img src="image1.jpg" alt="Anuncio 1">
-                        </div>
-                        <div class="carousel-item">
-                            <img src="image2.jpg" alt="Anuncio 2">
-                        </div>
-                        <div class="carousel-item">
-                            <img src="image3.jpg" alt="Anuncio 3">
-                        </div>
-                    </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#anuncioCarousel" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#anuncioCarousel" data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Next</span>
-                    </button>
-                </div>
-
-                <div class="d-grid gap-2 d-sm-flex justify-content-center">
-                    <button id="generarClienteBtn" class="btn btn-primary btn-custom">Generar Cliente</button>
-                    <button id="entregarTicketBtn" class="btn btn-success btn-custom">Entregar Ticket</button>
-                    <button id="reiniciarBtn" class="btn btn-danger btn-custom">Reiniciar Cola</button>
-                </div>
-                <div id="anuncio" class="announcement mt-4"></div>
-            </div>
-        </div>
+      <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+        <img src="logo.png" alt="Logo" width="36" height="36" class="rounded">
+        <span>Banco</span>
+      </a>
+      <div class="ms-auto">
+        <span id="ticketDisplay" class="badge rounded-pill text-bg-light fs-6">Tickets: 0</span>
+      </div>
     </div>
+  </nav>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="generar_ticket.js"></script>
+  <main class="container my-4">
+    <div class="row g-4">
+      <!-- Columna izquierda: Estado de cajas + Cola -->
+      <div class="col-lg-4">
+        <!-- Estado de las cajas -->
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title mb-3">Estado de las Cajas</h5>
+            <!-- Contenedor dinámico (lo llena tu JS) -->
+            <div id="estadoCajas" class="vstack gap-2"></div>
+            <a href="llamado.html" class="btn btn-outline-danger w-100 mt-3">Ir a Cajas</a>
+          </div>
+        </div>
+
+        <!-- Cola visual -->
+        <div class="card shadow-sm mt-4">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <h6 class="m-0">Clientes en espera</h6>
+              <span class="text-muted small">Tiempo real</span>
+            </div>
+            <!-- ÚNICO contenedor "cola" -->
+            <div id="cola" class="d-flex flex-wrap gap-2"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Columna derecha: Carrusel + Botones + Avisos -->
+      <div class="col-lg-8">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h4 class="card-title">Sistema de Atención de Clientes</h4>
+            <p class="text-muted mb-3">Panel principal</p>
+
+            <!-- Carrusel -->
+            <div id="anuncioCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
+              <div class="carousel-inner rounded-3 overflow-hidden">
+                <div class="carousel-item active">
+                  <img src="image1.jpg" class="d-block w-100" style="max-height:420px;object-fit:cover" alt="Anuncio 1">
+                </div>
+                <div class="carousel-item">
+                  <img src="image2.jpg" class="d-block w-100" style="max-height:420px;object-fit:cover" alt="Anuncio 2">
+                </div>
+                <div class="carousel-item">
+                  <img src="image3.jpg" class="d-block w-100" style="max-height:420px;object-fit:cover" alt="Anuncio 3">
+                </div>
+              </div>
+              <button class="carousel-control-prev" type="button" data-bs-target="#anuncioCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Anterior</span>
+              </button>
+              <button class="carousel-control-next" type="button" data-bs-target="#anuncioCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Siguiente</span>
+              </button>
+            </div>
+
+            <!-- Botones principales -->
+            <div class="d-grid d-sm-flex gap-2 justify-content-center">
+              <button id="generarClienteBtn" class="btn btn-danger">Generar Cliente</button>
+              <button id="entregarTicketBtn" class="btn btn-outline-secondary">Entregar Ticket</button>
+              <button id="reiniciarBtn" class="btn btn-outline-dark">Reiniciar Cola</button>
+            </div>
+
+            <!-- Avisos -->
+            <div id="anuncio" class="alert alert-info mt-4 mb-0 d-none"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Mostrar/ocultar alert de anuncio si tu JS setea texto
+    const anuncio = document.getElementById('anuncio');
+    const obs = new MutationObserver(() => {
+      if (anuncio && anuncio.textContent.trim() !== '') anuncio.classList.remove('d-none');
+    });
+    if (anuncio) obs.observe(anuncio, { childList:true, characterData:true, subtree:true });
+  </script>
+  <script src="generar_ticket.js"></script>
 </body>
 </html>

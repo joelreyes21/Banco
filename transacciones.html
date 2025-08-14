@@ -1,138 +1,295 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cola de Banco - Transacciones</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        body {
-            background-color: #f4f6f9;
-            font-family: 'Arial', sans-serif;
-        }
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Cola de Banco - Transacciones</title>
 
-        .header {
-            background-color: white;
-            color: #2c3e50;
-            padding: 20px 50px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
 
-        .logo {
-            height: 50px;
-            width: auto;
-        }
-
-        .caja {
-            width: 200px;
-            height: 200px;
-            margin: 20px;
-            display: inline-block;
-            border: 2px solid #ccc;
-            text-align: center;
-            border-radius: 10px;
-            background-color: #ffffff;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .caja h5 {
-            margin-top: 70px;
-            font-size: 1.3em;
-            font-weight: bold;
-            color: #e74c3c; 
-        }
-
-        .btn-custom {
-            background-color: white;
-            color: #2c3e50;
-            border: none;
-            padding: 12px 24px;
-            font-size: 1.1rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-            transition: background-color 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .btn-custom:hover {
-            background-color: #f0f0f0;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-        }
-
-        .container {
-            margin-top: 20px;
-        }
-
-        .announcement {
-            font-weight: bold;
-            color: #d9534f;
-            font-size: 1.1em;
-        }
-    </style>
+  <style>
+    /* Grid para las cajas generadas por tu JS/esta página */
+    #cajas{
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1rem;
+    }
+    .caja{
+      background: #ffffff;
+      border: 1px solid #dee2e6;
+      border-radius: .5rem;
+      min-height: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;      /* para botón × si lo usas */
+      box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);
+      padding: .5rem;
+      text-align: center;
+    }
+    .caja h5{
+      margin: 0;
+      font-weight: 700;
+      color: #dc3545;
+    }
+  </style>
 </head>
-<body>
+<body class="bg-light">
 
-    <div class="header">
-        <img src="logo.png" alt="BAC Credomatic Logo" class="logo">
-        <h1>Banco - Transacciones</h1>
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+        <img src="logo.png" alt="Logo" width="36" height="36" class="rounded">
+        <span>Transacciones</span>
+      </a>
+      <div class="ms-auto">
+        <a href="llamado.html" class="btn btn-outline-light btn-sm">Ir a Cajas</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container my-4">
+
+    <!-- Panel de control -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-body d-flex flex-wrap gap-2 align-items-center">
+        <button id="agregarCajaBtn" class="btn btn-success">
+          <i class="bi bi-plus-circle"></i> Agregar Caja
+        </button>
+        <button id="llamarClienteBtn" class="btn btn-primary">
+          <i class="bi bi-bell"></i> Llamar Cliente
+        </button>
+        <button id="reiniciarBtn" class="btn btn-outline-danger">
+          <i class="bi bi-arrow-counterclockwise"></i> Reiniciar Vista
+        </button>
+        <span class="ms-auto text-muted small">Doble clic en una caja para liberarla.</span>
+      </div>
     </div>
 
-    <div class="container text-center">
-        <h3 class="mb-4">Estado de las Cajas</h3>
+    <!-- Estadísticas -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-secondary text-white">
+        <h5 class="mb-0">Estadísticas</h5>
+      </div>
+      <div class="card-body">
+        <div class="row g-3 text-center">
+          <div class="col-6 col-md-3">
+            <div class="card border-0">
+              <div class="card-body">
+                <div class="text-muted small">Cajas totales</div>
+                <div id="statCajasTotales" class="fs-4 fw-bold">0</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="card border-0">
+              <div class="card-body">
+                <div class="text-muted small">Cajas ocupadas</div>
+                <div id="statCajasOcupadas" class="fs-4 fw-bold">0</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="card border-0">
+              <div class="card-body">
+                <div class="text-muted small">Cajas libres</div>
+                <div id="statCajasLibres" class="fs-4 fw-bold">0</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="card border-0">
+              <div class="card-body">
+                <div class="text-muted small">En cola</div>
+                <div id="statEnCola" class="fs-4 fw-bold">0</div>
+              </div>
+            </div>
+          </div>
 
-        <div id="cajas" class="mb-4">
-            <div id="caja1" class="caja"><h5>Caja 1</h5></div>
-            <div id="caja2" class="caja"><h5>Caja 2</h5></div>
-            <div id="caja3" class="caja"><h5>Caja 3</h5></div>
-            <div id="caja4" class="caja"><h5>Caja 4</h5></div>
-            <div id="caja5" class="caja"><h5>Caja 5</h5></div>
-            <div id="caja6" class="caja"><h5>Caja 6</h5></div>
+          <div class="col-6 col-md-4">
+            <div class="card border-0">
+              <div class="card-body">
+                <div class="text-muted small">Atendidos hoy</div>
+                <div id="statAtendidos" class="fs-4 fw-bold">0</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-md-4">
+            <div class="card border-0">
+              <div class="card-body">
+                <div class="text-muted small">Se salieron de la fila</div>
+                <div id="statSalidos" class="fs-4 fw-bold">0</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-md-4">
+            <div class="card border-0">
+              <div class="card-body">
+                <div class="text-muted small">Máximo de cajas usadas</div>
+                <div id="statMaxCajas" class="fs-4 fw-bold">0</div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <a href="index.html" class="btn btn-custom">Ir al Inicio</a>
+        <div id="anuncio" class="alert alert-info mt-3 d-none">Esperando acciones…</div>
+      </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const cajas = JSON.parse(localStorage.getItem('cajas')) || [null, null, null, null, null, null]; // 6 cajas
+    <!-- Estado de Cajas -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-secondary text-white">
+        <h5 class="mb-0">Estado de las Cajas</h5>
+      </div>
+      <div class="card-body">
+        <div id="cajas">
+          <!-- Esta vista y tu transacciones.js pintan aquí -->
+        </div>
+      </div>
+    </div>
 
-            function actualizarCajas() {
-                cajas.forEach((cliente, index) => {
-                    const cajaDiv = document.getElementById('caja' + (index + 1));
-                    if (cliente) {
-                        cajaDiv.style.backgroundColor = cliente.color || '#f8f9fa'; 
-                        cajaDiv.innerHTML = `<h5>Cliente ${cliente.id} </h5>`; 
-                    } else {
-                        cajaDiv.style.backgroundColor = '#f8f9fa';
-                        cajaDiv.innerHTML = `<h5>Caja ${index + 1}</h5>`;
-                    }
-                });
-            }
+    <div class="d-flex gap-2">
+      <a href="index.html" class="btn btn-outline-secondary">Ir al Inicio</a>
+      <a href="llamado.html" class="btn btn-outline-danger">Ir a Cajas</a>
+    </div>
 
-            function retirarClienteCaja(event) {
-                const cajaDiv = event.target.closest('.caja');
-                const cajaIndex = parseInt(cajaDiv.id.replace('caja', '')) - 1;
+  </main>
 
-                if (cajas[cajaIndex]) {
-                    cajas[cajaIndex] = null;
-                    localStorage.setItem('cajas', JSON.stringify(cajas));
-                    actualizarCajas();
-                }
-            }
+  <!-- Bootstrap JS & Icons -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
 
-            document.querySelectorAll('.caja').forEach(caja => {
-                caja.addEventListener('dblclick', retirarClienteCaja);
-            });
+  <!-- Lógica mínima de página (no pisa tu transacciones.js) -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const cajasEl = document.getElementById('cajas');
+      const anuncio = document.getElementById('anuncio');
 
-            actualizarCajas(); 
+      function getCajas(){ return JSON.parse(localStorage.getItem('cajas')) || []; }
+      function setCajas(arr){ localStorage.setItem('cajas', JSON.stringify(arr)); }
+
+      function getCola(){ return JSON.parse(localStorage.getItem('cola')) || []; }
+
+      // ---- Estadísticas (usa métricas si existen; si no, 0) ----
+      function getMetric(key, fallback=0){
+        const v = localStorage.getItem(key);
+        const n = v == null ? NaN : Number(v);
+        return Number.isFinite(n) ? n : fallback;
+      }
+      function setMetric(key, val){ localStorage.setItem(key, String(val)); }
+
+      function updateStats(){
+        const cajas = getCajas();
+        const ocupadas = cajas.filter(x => !!x).length;
+        const libres = cajas.length - ocupadas;
+        const enCola = getCola().length;
+
+        // Máximo de cajas usadas (se actualiza automáticamente)
+        const prevMax = getMetric('metrics:maxCajas', 0);
+        const maxCajas = Math.max(prevMax, ocupadas);
+        setMetric('metrics:maxCajas', maxCajas);
+
+        // Render
+        document.getElementById('statCajasTotales').textContent = cajas.length;
+        document.getElementById('statCajasOcupadas').textContent = ocupadas;
+        document.getElementById('statCajasLibres').textContent = libres;
+        document.getElementById('statEnCola').textContent = enCola;
+
+        document.getElementById('statAtendidos').textContent = getMetric('metrics:atendidosHoy', 0);
+        document.getElementById('statSalidos').textContent   = getMetric('metrics:salidosHoy', 0);
+        document.getElementById('statMaxCajas').textContent  = maxCajas;
+      }
+
+      // ---- Render de cajas (esta página puede mostrar si no tienes otro render aquí) ----
+      function renderCajas(){
+        const cajas = getCajas();
+        cajasEl.innerHTML = '';
+        if (cajas.length === 0){
+          cajasEl.innerHTML = '<div class="text-muted">No hay cajas creadas.</div>';
+          return;
+        }
+        cajas.forEach((cliente, i) => {
+          const card = document.createElement('div');
+          card.className = 'caja';
+          card.id = 'caja' + (i+1);
+          card.style.backgroundColor = cliente ? (cliente.color || '#f8f9fa') : '#fff';
+          card.innerHTML = `<h5>${cliente ? ('Cliente ' + cliente.id) : ('Caja ' + (i+1) + ' desocupada')}</h5>`;
+          cajasEl.appendChild(card);
         });
-    </script>
 
-    <script src="transacciones.js"></script>
+        // Doble clic para liberar (igual a tu lógica)
+        document.querySelectorAll('.caja').forEach(div => {
+          div.addEventListener('dblclick', (e) => {
+            const idx = parseInt(div.id.replace('caja',''),10) - 1;
+            const cajas = getCajas();
+            if (cajas[idx]) {
+              cajas[idx] = null;
+              setCajas(cajas);
+              renderCajas();
+              showAnuncio('Caja ' + (idx+1) + ' desocupada');
+              updateStats();
+            }
+          });
+        });
+      }
+
+      function showAnuncio(msg){
+        if (!anuncio) return;
+        anuncio.textContent = msg || '';
+        anuncio.classList.toggle('d-none', !msg);
+      }
+
+      // ---- Acciones ----
+      document.getElementById('agregarCajaBtn').addEventListener('click', () => {
+        const cajas = getCajas();
+        cajas.push(null);          // nueva caja libre
+        setCajas(cajas);
+        renderCajas();
+        updateStats();
+        showAnuncio('Se agregó la caja ' + cajas.length);
+      });
+
+      document.getElementById('llamarClienteBtn').addEventListener('click', () => {
+        // Si ya tienes esta lógica en transacciones.js/llamar_cliente.js, puedes quitar esto.
+        // Aquí solo intentamos mover el primero de la cola a la primera caja libre.
+        const cola = getCola();
+        if (cola.length === 0){ showAnuncio('No hay clientes en la cola.'); return; }
+        const cajas = getCajas();
+        const libre = cajas.findIndex(x => x === null);
+        if (libre === -1){ showAnuncio('Todas las cajas están ocupadas.'); return; }
+
+        const cliente = cola.shift();
+        cajas[libre] = cliente;
+        setCajas(cajas);
+        localStorage.setItem('cola', JSON.stringify(cola));
+        renderCajas();
+        updateStats();
+        showAnuncio(`Ticket número ${cliente.id}, ir a caja ${libre + 1}`);
+      });
+
+      document.getElementById('reiniciarBtn').addEventListener('click', () => {
+        // Reinicia solo la VISTA (no borra cola), puedes ajustar si quieres borrar todo
+        renderCajas();
+        updateStats();
+        showAnuncio('Vista actualizada.');
+      });
+
+      // ---- Inicial ----
+      renderCajas();
+      updateStats();
+
+      // Observa cambios externos (si otra pestaña modifica localStorage)
+      window.addEventListener('storage', (e) => {
+        if (['cajas','cola','metrics:atendidosHoy','metrics:salidosHoy','metrics:maxCajas'].includes(e.key)) {
+          renderCajas(); updateStats();
+        }
+      });
+    });
+  </script>
+
+  <!-- Tu lógica (si la usas en esta página) -->
+  <script src="transacciones.js"></script>
 </body>
 </html>
