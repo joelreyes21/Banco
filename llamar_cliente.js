@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const cajas = JSON.parse(localStorage.getItem('cajas')) || []; // arranca sin cajas
+    const cajas = JSON.parse(localStorage.getItem('cajas')) || []; 
 
     function mostrarAnuncio(mensaje) {
         const a = document.getElementById('anuncio');
@@ -24,9 +24,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const div = document.createElement('div');
             div.className = 'caja';
             div.id = 'caja' + (index + 1);
-            div.style.position = 'relative'; // para posicionar el botón "×"
+            div.style.position = 'relative'; 
 
-            // --- Contenido de la caja (usar "=" y NO "+=") ---
+            
             if (cliente) {
                 div.style.backgroundColor = cliente.color || '#f8f9fa';
                 div.innerHTML = `<h5>Cliente ${cliente.id}</h5>`;
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 div.innerHTML = `<h5>Caja ${index + 1} desocupada</h5>`;
             }
 
-            // --- Botón eliminar caja (arriba-izquierda) ---
+            
             const btn = document.createElement('button');
             btn.textContent = '×';
             btn.style.position = 'absolute';
@@ -48,8 +48,8 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.style.cursor = 'pointer';
             btn.style.fontWeight = 'bold';
             btn.onclick = (e) => {
-                e.stopPropagation();                 // no interferir con dblclick
-                cajas.splice(index, 1);              // quitar esta caja
+                e.stopPropagation();                 
+                cajas.splice(index, 1);              
                 localStorage.setItem('cajas', JSON.stringify(cajas));
                 actualizarCajas();
                 mostrarAnuncio(`Se eliminó la caja ${index + 1}`);
@@ -59,14 +59,14 @@ document.addEventListener('DOMContentLoaded', () => {
             cont.appendChild(div);
         });
 
-        // Re‑enganchar doble clic (porque recreamos nodos al renderizar)
+        
         document.querySelectorAll('.caja').forEach(caja => {
             caja.addEventListener('dblclick', retirarClienteCaja);
         });
     }
 
     function agregarCaja() {
-        cajas.push(null);                       // nueva caja libre
+        cajas.push(null);                       
         localStorage.setItem('cajas', JSON.stringify(cajas));
         actualizarCajas();
         mostrarAnuncio(`Se agregó la caja ${cajas.length}.`);
@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
             actualizarCajas();
             const mensaje = `Ticket número ${cliente.id}, ir a caja ${cajaDesocupada + 1}`;
             mostrarAnuncio(mensaje);
-            // reproducirVoz(mensaje); // descomenta si querés voz
+            
         } else { 
             mostrarAnuncio('Todas las cajas están ocupadas.');
             return;
@@ -107,15 +107,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const cajaIndex = parseInt(cajaDiv.id.replace('caja', ''), 10) - 1;
 
         if (cajas[cajaIndex]) {
-            // Liberar caja actual
+            
             cajas[cajaIndex] = null;
             localStorage.setItem('cajas', JSON.stringify(cajas));
             actualizarCajas();
             const mensaje = `Caja ${cajaIndex + 1} desocupada`;
             mostrarAnuncio(mensaje);
-            // reproducirVoz(mensaje);
+            
 
-            // Traer siguiente de la cola (si hay)
+            
             let cola = JSON.parse(localStorage.getItem('cola')) || [];
             if (cola.length > 0) {
                 const siguienteCliente = cola.shift();
@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 actualizarCajas();
                 const mensajeSiguiente = `Ticket número ${siguienteCliente.id} ir a caja ${cajaIndex + 1}`;
                 mostrarAnuncio(mensajeSiguiente);
-                // reproducirVoz(mensajeSiguiente);
+                
             }
         }
     }
@@ -135,12 +135,12 @@ document.addEventListener('DOMContentLoaded', () => {
         btnLlamar.addEventListener('click', llamarCliente);
     }
 
-    // enganchar dblclick inicial si ya hay cajas guardadas
+    
     document.querySelectorAll('.caja').forEach(caja => {
         caja.addEventListener('dblclick', retirarClienteCaja);
     });
 
-    // Cargar estado guardado y renderizar
+
     const almacenCajas = JSON.parse(localStorage.getItem('cajas'));
     if (almacenCajas) {
         almacenCajas.forEach((cliente, index) => { cajas[index] = cliente; });

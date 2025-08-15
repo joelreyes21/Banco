@@ -1,8 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // Estado base
-  const cajas = JSON.parse(localStorage.getItem('cajas')) || []; // arreglo de cajas (null o {id,color,...})
+  const cajas = JSON.parse(localStorage.getItem('cajas')) || [];
 
-  // Helpers DOM
   const contCajas = document.getElementById('cajas');
   const btnAgregar = document.getElementById('agregarCajaBtn');
 
@@ -17,7 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
     el.innerText = mensaje || '';
   }
 
-  // Guarda/lee
   function saveCajas() {
     localStorage.setItem('cajas', JSON.stringify(cajas));
   }
@@ -26,7 +23,6 @@ document.addEventListener('DOMContentLoaded', () => {
     catch { return []; }
   }
 
-  // ---------- RENDER ----------
   function actualizarCajas() {
     contCajas.innerHTML = '';
     if (cajas.length === 0) {
@@ -48,7 +44,6 @@ document.addEventListener('DOMContentLoaded', () => {
         div.innerHTML = `<h5>Caja ${index + 1}</h5>`;
       }
 
-      // Doble clic: liberar la caja y asignar siguiente si hay
       div.addEventListener('dblclick', () => retirarClienteCaja(index));
 
       contCajas.appendChild(div);
@@ -57,7 +52,6 @@ document.addEventListener('DOMContentLoaded', () => {
     actualizarStats();
   }
 
-  // ---------- ESTADÍSTICAS ----------
   function actualizarStats() {
     const ocupadas = cajas.filter(Boolean).length;
     const totales = cajas.length;
@@ -69,15 +63,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (sLib) sLib.textContent = libres;
     if (sCola) sCola.textContent = enCola;
 
-    // Máximo de cajas usadas (snapshot simple)
     const keyMax = 'metrics:maxCajas';
     const prevMax = Number(localStorage.getItem(keyMax) || '0');
     if (ocupadas > prevMax) localStorage.setItem(keyMax, String(ocupadas));
   }
 
-  // ---------- ACCIONES ----------
   function agregarCaja() {
-    cajas.push(null); // nueva caja libre
+    cajas.push(null);
     saveCajas();
     actualizarCajas();
     mostrarAnuncio(`Se agregó la caja ${cajas.length}`);
@@ -85,7 +77,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function retirarClienteCaja(cajaIndex) {
     if (cajas[cajaIndex]) {
-      // liberar caja
       const atendidosKey = 'metrics:atendidosHoy';
       const prevAt = Number(localStorage.getItem(atendidosKey) || '0');
       localStorage.setItem(atendidosKey, String(prevAt + 1));
@@ -95,7 +86,6 @@ document.addEventListener('DOMContentLoaded', () => {
       actualizarCajas();
       mostrarAnuncio(`Caja ${cajaIndex + 1} desocupada`);
 
-      // Traer siguiente de la cola (si hay)
       let cola = getCola();
       if (cola.length > 0) {
         const siguienteCliente = cola.shift();
@@ -108,9 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // ---------- LISTENERS ----------
   if (btnAgregar) btnAgregar.addEventListener('click', agregarCaja);
 
-  // Si tenías cajas en localStorage, ya están en `cajas`
   actualizarCajas();
 });

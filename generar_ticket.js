@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Reiniciar numeración de tickets en cada refresh
+    
     localStorage.setItem('numeroCliente', '1');
 
-    // Cargar cola existente (si hay)
+    
     let cola = JSON.parse(localStorage.getItem('cola')) || [];
 
     function reproducirVoz(texto) {
@@ -15,9 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (a) a.innerText = mensaje;
     }
 
-    // Refresca el display del header:
-    // - Si hay ticketActual => "Ticket: X"
-    // - Si no, muestra "Tickets: N" (N = largo de la cola)
+    
     function refrescarHeader() {
         const el = document.getElementById('ticketDisplay');
         if (!el) return;
@@ -40,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
             clienteDiv.innerText = 'C' + cliente.id;
             colaDiv.appendChild(clienteDiv);
         });
-        // Actualiza el contador del header si no hay ticketActual
+        
         const ticketActual = localStorage.getItem('ticketActual');
         if (!ticketActual) {
             const el = document.getElementById('ticketDisplay');
@@ -48,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Estado de cajas dinámico (lee de localStorage)
+    
     function actualizarEstadoCajas() {
         const cont = document.getElementById('estadoCajas');
         if (!cont) return;
@@ -71,9 +69,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Lee y luego incrementa el número para el próximo ticket
+    
     function obtenerNumeroCliente() {
-        // OJO: ya reiniciamos a '1' en cada refresh arriba.
+        
         let numeroCliente = parseInt(localStorage.getItem('numeroCliente')) || 1;
         return numeroCliente;
     }
@@ -89,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('cola', JSON.stringify(cola));
         actualizarCola();
         actualizarNumeroCliente(numeroCliente + 1);
-        // Al generar (sin entregar), el header debe mostrar cantidad en cola
+        
         const ticketActual = localStorage.getItem('ticketActual');
         if (!ticketActual) {
             const el = document.getElementById('ticketDisplay');
@@ -103,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const cliente = cola[0]; // NO removemos aquí; lo remueve la caja al llamar
+        const cliente = cola[0]; 
         localStorage.setItem('ticketActual', String(cliente.id));
 
         const display = document.getElementById('ticketDisplay');
@@ -111,20 +109,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const mensajeTicket = `Ticket número ${cliente.id} entregado.`;
         mostrarAnuncio(mensajeTicket);
-        // Si querés voz, descomenta:
-        // reproducirVoz(mensajeTicket);
+        
 
         actualizarCola();
         actualizarEstadoCajas();
     }
 
     function reiniciarCola() {
-        // vaciar cola en storage y memoria
+        
         cola = [];
         localStorage.setItem('cola', JSON.stringify(cola));
         localStorage.removeItem('ticketActual');
 
-        // reiniciar numeración para próximos tickets
+        
         actualizarNumeroCliente(1);
 
         const display = document.getElementById('ticketDisplay');
@@ -137,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
         actualizarEstadoCajas();
     }
 
-    // (Opcional) color random si luego lo querés usar
+    
     function getRandomColor() {
         const letters = '0123456789ABCDEF';
         let color = '#';
@@ -145,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return color;
     }
 
-    // Listeners
+    
     const btnGen = document.getElementById('generarClienteBtn');
     if (btnGen) btnGen.addEventListener('click', generarCliente);
 
@@ -155,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnRei = document.getElementById('reiniciarBtn');
     if (btnRei) btnRei.addEventListener('click', reiniciarCola);
 
-    // Render inicial
+    
     actualizarCola();
     actualizarEstadoCajas();
     refrescarHeader();
